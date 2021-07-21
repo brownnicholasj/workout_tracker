@@ -25,7 +25,6 @@ router.post('/workouts/range', ({ body }, res) => {
 });
 
 router.put('/workouts/:id', (req, res) => {
-	console.log(req.body);
 	Workout.where({ _id: mongojs.ObjectId(req.params.id) })
 		.update({
 			$push: {
@@ -40,11 +39,24 @@ router.put('/workouts/:id', (req, res) => {
 		});
 });
 
+// router.get('/workouts/range', (req, res) => {
+// 	Workout.find({})
+// 		.sort({ date: -1 })
+// 		.then((dbWorkout) => {
+// 			res.json(dbWorkout);
+// 		})
+// 		.catch((err) => {
+// 			res.status(400).json(err);
+// 		});
+// });
+
 router.get('/workouts/range', (req, res) => {
-	Workout.find({})
-		.sort({ date: -1 })
+	aggregate
+		.addFields({
+			totalDuration: { $sum: '$exercises.duration' },
+		})
 		.then((dbWorkout) => {
-			res.json(dbWorkout);
+			res.json(dbWorkout.slice(0).slice(-7));
 		})
 		.catch((err) => {
 			res.status(400).json(err);
