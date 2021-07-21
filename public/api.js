@@ -35,12 +35,15 @@ const API = {
 		return json;
 	},
 
-	async getWorkoutsInRange() {
-		const res = await fetch(`/api/workouts/range`);
+	async getWorkoutsInRange(data = {}) {
+		const res = await fetch('/api/workouts/range', {
+			method: 'POST',
+			body: JSON.stringify(data),
+			headers: { 'Content-Type': 'application/json' },
+		});
+
 		const json = await res.json();
 
 		return json;
 	},
 };
-
-module.exports = API;
