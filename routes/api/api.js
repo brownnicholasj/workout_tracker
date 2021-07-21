@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const Workout = require('../../models/workout.js');
+const mongojs = require('mongojs');
 
 const aggregate = Workout.aggregate([]);
 
@@ -15,6 +16,22 @@ router.post('/workouts', ({ body }, res) => {
 
 router.post('/workouts/range', ({ body }, res) => {
 	Workout.insertMany(body)
+		.then((dbWorkout) => {
+			res.json(dbWorkout);
+		})
+		.catch((err) => {
+			res.status(400).json(err);
+		});
+});
+
+router.put('/workouts/:id', (req, res) => {
+	console.log(req.body);
+	Workout.where({ _id: mongojs.ObjectId(req.params.id) })
+		.update({
+			$push: {
+				exercises: [req.body],
+			},
+		})
 		.then((dbWorkout) => {
 			res.json(dbWorkout);
 		})
